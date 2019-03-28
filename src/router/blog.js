@@ -1,43 +1,57 @@
 const {blogList,getDetail,newBlog,updateBlog,delBlog}=require("../controller/blog")
-const {SuccessModel}=require("../model/BaseModel")
+const {SuccessModel,ErrorModel}=require("../model/BaseModel")
 const blogHandle=(req,res)=>{
     var url = req.url;
     var methods=req.method;
     var baseName=url.split('?')[0]
+    var id=req.query.id
     if(methods==='GET'&&baseName==='/api/blog/list'){
         let {author,keyword}=req.query
         var res=blogList(author,keyword)
         return res.then(data=>{
-            console.log(data)
-            return new SuccessModel(res)
+            return new SuccessModel(data)
+        }).catch((err)=>{
+            console.log(err,"222")
         })
       
     }
     if(methods==='GET'&&baseName==='/api/blog/detail'){
-        let {id}=req.query
-        var res=getDetail(id)
-        return new SuccessModel(res)
+       return getDetail(id).then((data)=>{
+            if(data){
+                return new SuccessModel(data)
+            }
+            
+        })
     }
     if(methods==='POST'&&baseName==='/api/blog/new'){
-        let {blog}=req.body
+        let blog=req.body
         let res=newBlog(blog)
         return res.then(data=>{
-            console.log(data)
             return new SuccessModel(data)
         }).catch((err)=>{
             console.log(err)
-            return 
+            return new ErrorModel("错误")
         })
     }
     if(methods==='POST'&&baseName==='/api/blog/update'){
-        let {blog,id}=req.body
-        let res=updateBlog(blog,id)
-        return new SuccessModel(res)
+        let {id,content,title}=req.body
+        var author='hai'
+        return updateBlog(id,content,title).then((data)=>{
+            if(data){
+                return new SuccessModel()
+            }
+            return new ErrorModel("错误")
+            
+        })
     }
     if(methods==='GET'&&baseName==='/api/blog/del'){
-        let {id}=req.body
-        let res=delBlog(id)
-        return new SuccessModel(res)
+        return delBlog(id).then((data)=>{
+            if(data){
+                return new SuccessModel()
+            }
+            return new ErrorModel("错误")
+            
+        })
     }
 }
 module.exports=blogHandle

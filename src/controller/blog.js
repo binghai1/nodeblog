@@ -1,41 +1,52 @@
 const query = require('../db/index')
 const blogList=(author,keyword)=>{
-     const sql=`select * from blog where 1=1`
+     var sql=`select * from blog where 1=1`
      if(author){
-         sql+=`author=${author}`
+         sql+=` and author='${author}'`
      }
      if(keyword){
-        sql+=`keyword=${keyword}`
+        sql+=` and title like '%${keyword}%'`
      }
-     sql+='order by createtime desc'
-     var res=query(sql)
-     console.log(res,222)
-     return res
+     sql+=' order by createtime desc'
+     return  query(sql)
 }
 const getDetail=(id)=>{
-    return[
-        {
-            id:1,
-            title:"标题1",
-            content:"内容1",
-            createTime:"212314141",
-            author:"zhangshan"
-
-        }
-    ]
+    const sql=`select * from blog where id=${id}`
+    return query(sql).then((rows)=>{
+        return rows[0]
+    })
 }
 const newBlog=(blog={})=>{
-    const sql=`insert into blog (title,content,createtime,author) values('刘子','这是一本斗智斗勇的传奇小说','1553677311815','海哥')`
-    var result=query(sql)
-    return result
-       
-
+    const {title,content,createtime,author}=blog
+    const sql=`insert into blog (title,content,createtime,author) values('${title}','${content}','${createtime}','${author}')`
+    return query(sql).then(row=>{
+        console.log(row)
+        if(row.affectedRows>0){
+            return {
+                id:row.insertId
+            }
+        }
+    })
 }
-const updateBlog=(blog={},id)=>{
-    return true
+const updateBlog=(id,content,title)=>{
+    const sql=`update blog set title='${title}',content='${content}' where id='${id}'` 
+    return query(sql).then((row)=>{
+        if(row.affectedRows>0){
+            return true
+        }
+            return false
+    }).catch((err)=>{
+        console.log("err",err)
+    } )
 }
 const delBlog=(id)=>{
-    return true
+    const sql=`delete from blog where id=${id}`
+    return query(sql).then((row)=>{
+        if(row.affectedRows>0){
+            return true
+        }
+            return false
+    })
 }
 module.exports={
     blogList,

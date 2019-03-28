@@ -5,14 +5,13 @@ conn.connect()
 
 var exec=(sql)=>{
     return new Promise((resolve,reject)=>{
-        conn.query(sql,(data,err)=>{
+        conn.query(sql,(err,data)=>{
             if(err){
                 reject(err)
                 return
-            }else{
-                resolve(data)
             }
-        })
+            resolve(data)
+        })  
     })
 }
 module.exports=exec

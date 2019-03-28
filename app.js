@@ -1,7 +1,6 @@
 const blogHandle=require('./src/router/blog')
 const userHandle=require('./src/router/user')
 const querystring = require('querystring');
-const {SuccessModel,ErrorModel} =require('./src/model/baseModel')
 const handlePost=(req)=>{
     return new Promise((resolve,reject)=>{
         if(req.method!='POST'){
@@ -23,16 +22,15 @@ const handlePost=(req)=>{
 }
 const serverHanlde= (req,res)=>{
     res.setHeader('Content-Type','application/json')
- 
     req.query=querystring.parse(req.url.split('?')[1])
-    var userDate=userHandle(req,res)
     handlePost(req).then((chunk)=>{
         req.body=chunk//异步代码
+        var userDate=userHandle(req,res)
         if(userDate){
             userDate.then(data=>{
-                console.log(data)
+                console.log(JSON.stringify(data),333)
                 res.end(JSON.stringify(data))
-                 return
+                return
             })
         }
         var blogData=blogHandle(req,res)
@@ -44,10 +42,11 @@ const serverHanlde= (req,res)=>{
             })
         }
         // res.writeHeader(404,'Content-Type','text/plain')
-        // const data="404notfound"
-        // res.end(data)
+        // res.write("404notfound\n")
+        // res.end()
     })
-    
+   
+
     // var obj={
     //     name:222,
     //     env:process.env.NODE_ENV
