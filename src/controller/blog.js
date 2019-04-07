@@ -28,7 +28,8 @@ const newBlog=(blog={})=>{
         }
     })
 }
-const updateBlog=(id,content,title)=>{
+const updateBlog=(id,blog)=>{
+    const {content,title}=blog
     const sql=`update blog set title='${title}',content='${content}' where id='${id}'` 
     return query(sql).then((row)=>{
         if(row.affectedRows>0){

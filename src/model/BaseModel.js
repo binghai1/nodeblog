@@ -3,7 +3,6 @@ class BaseModel{
         if(typeof data ==='string'){
             this.msg=data;
             this.data=null;
-            this.msg=null;
         }else{
             this.data=data&&data;
             this.msg=msg&&msg;
